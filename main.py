@@ -1,11 +1,21 @@
 from fastapi import FastAPI
+from typing import Optional
 
 app = FastAPI()
 
 
 @app.get("/")
 def get_root():
-    return {"data": "blog list"}
+    return {"Hello": "Man!"}
+
+
+@app.get("/page")
+def get_page(limit=10, published: bool = True, sort: Optional[str] = None):
+    if published:
+        return {"data": f"{limit} published pages from the db"}
+    else:
+        return {"data": f"{limit} pages from the db"}
+
 
 
 @app.get("/about")
@@ -24,5 +34,5 @@ def get_page(id: int):
 
 
 @app.get("/page/{id}/info")
-def get_page_info(id):
+def get_page_info(id, limit=10):
     return {"data": {"1", "2"}}
