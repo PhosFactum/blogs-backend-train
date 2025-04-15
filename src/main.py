@@ -2,9 +2,9 @@ from typing import List
 
 from fastapi import FastAPI, Depends, status, HTTPException
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
 
 from database import engine, SessionLocal
+from hashing import Hash
 import schemas
 import models
 
@@ -52,7 +52,7 @@ def update_blog(id:int, request: schemas.Blog, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Blog with id {id} not found"
         )
-    blog.update(request)
+    blog.update(request.dict())
     db.commit()
     return "updated"
 
@@ -74,15 +74,14 @@ def get_blog(id: int, db: Session = Depends(get_db)):
     return blog
 
 
-# Hashing password
-pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
 # Users handlers
 @app.post("/user")
 def create_user(request: schemas.User, db: Session = Depends(get_db)):
-    hashedPassword = pwd_cxt.hash(request.password)
-    new_user = models.User(name=request.name, email=request.email, password=hashedPassword)
+    new_user = models.User(
+        name=request.name, 
+        email=request.email, 
+        password=Hash.bcrypt(request.password)
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
