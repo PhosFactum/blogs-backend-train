@@ -3,8 +3,8 @@ from typing import List
 from fastapi import FastAPI, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
-from .database import engine, SessionLocal 
-from .hashing import Hash
+from src.database import engine, SessionLocal 
+from src.hashing import Hash
 from . import schemas
 from . import models
 
@@ -26,7 +26,7 @@ def get_db():
 ### Blog handlers
 @app.post("/blog", status_code=status.HTTP_201_CREATED, tags=["Blogs"])
 def post_blog(request: schemas.Blog, db: Session = Depends(get_db)):
-    new_blog = models.Blog(title=request.title, body=request.body)
+    new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
