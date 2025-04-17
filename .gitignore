@@ -1,4 +1,9 @@
+# Environment and cache files
 __pycache__
 .venv
-*.db
 *.pyc
+.idea
+
+# Databases
+*.db
+*.sqlite
