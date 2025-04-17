@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.database import get_db
@@ -13,7 +13,7 @@ router = APIRouter()
 
 # Handlers
 @router.post("/blog", status_code=status.HTTP_201_CREATED, tags=["Blogs"])
-def post_blog(request: schemas.Blog, db: Session = Depends(database.get_db)):
+def post_blog(request: schemas.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
     db.commit()
@@ -22,7 +22,7 @@ def post_blog(request: schemas.Blog, db: Session = Depends(database.get_db)):
 
 
 @router.delete("/blog/{id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Blogs"])
-def delete_blog(id: int, db: Session = Depends(database.get_db)):
+def delete_blog(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
     if not blog.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -34,7 +34,7 @@ def delete_blog(id: int, db: Session = Depends(database.get_db)):
 
 
 @router.put("/blog/{id}", status_code=status.HTTP_202_ACCEPTED, tags=["Blogs"])
-def update_blog(id: int, request: schemas.Blog, db: Session = Depends(database.get_db)):
+def update_blog(id: int, request: schemas.Blog, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
     if not blog.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -46,13 +46,13 @@ def update_blog(id: int, request: schemas.Blog, db: Session = Depends(database.g
 
 
 @router.get("/blog", response_model=List[schemas.ShowBlog], tags=["Blogs"])
-def get_all_blogs(db: Session = Depends(database.get_db)):
+def get_all_blogs(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
 @router.get("/blog/{id}", status_code=200, response_model=schemas.ShowBlog, tags=["Blogs"])
-def get_blog(id: int, db: Session = Depends(database.get_db)):
+def get_blog(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
         raise HTTPException(

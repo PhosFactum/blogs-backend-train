@@ -1,14 +1,9 @@
-from typing import List
+from fastapi import FastAPI
+from src.database import engine
 
-from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
-from src.database import engine, get_db
-from src.hashing import Hash
-from . import schemas
-from . import models
-from .routers import blog
-from .routers import user
+from src.routers import blog
+from src.routers import user
+from src import models
 
 
 app = FastAPI()
