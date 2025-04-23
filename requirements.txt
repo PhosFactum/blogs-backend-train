@@ -1,6 +1,9 @@
-fastapi
-uvicorn
-sqlalchemy
-passlib
-bcrypt
-alembic
+fastapi           # Framework for Python
+uvicorn           # ASGI
+sqlalchemy        # DBs
+passlib           # Hashing (more algorithms, includes bcrypt)
+bcrypt            # Hashing
+alembic           # Migrations of DBs (optional)
+pydantic          # Schemas
+python-jose       # JWT
+python-multipart  # For FastAPI authentication form
